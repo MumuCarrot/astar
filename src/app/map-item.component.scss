@@ -1,0 +1,61 @@
+$map-item-size: 50px;
+
+:host {
+    height: $map-item-size + 2px;
+    width: $map-item-size + 2px;
+   
+    .map-item {
+        height: $map-item-size;
+        width: $map-item-size;
+        background-color: #864f4f;
+        margin: 1px;
+        transition: .3s linear background-color;
+        cursor: pointer;
+        
+        p {
+            margin: 0;
+            padding: 0;
+            color: white;
+            font-size: 34px;
+            text-align: center;
+            align-content: center;
+            height: 100%;
+            user-select: none;
+        }
+
+        .svg-cont {
+            height: 100%;
+            width: 100%;
+            align-content: center;
+            text-align: center;
+
+            .dest {
+                height: 60%;
+                width: 60%;
+            }
+
+            .start {
+                height: 100%;
+                width: 100%;
+            }
+
+            .footprint {
+                height: 60%;
+                width: 60%;
+            }
+
+            svg {
+                fill: white;
+
+                path {
+                    fill: white;
+                }
+            }
+        }
+    }
+    
+    .map-item:hover {
+        background-color: #a67f7f;
+        transform: scale(1.1);
+    }
+}

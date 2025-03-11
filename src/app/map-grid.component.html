@@ -1,0 +1,18 @@
+<div class="cont">
+    <div class="fg">
+        @for (i of range(0, rowSize - 1); track $index) {
+            @for (j of range(0, columnSize - 1); track $index) {
+                <app-map-item [(point)]="obstacles[i][j]"></app-map-item>
+            }
+        }
+    </div>
+    <div class="bp">
+        <button (click)="start()">Start</button>
+        <button (click)="clear()">Clear All</button>
+
+        <button (click)="setTo(1)">Start point</button>
+        <button (click)="setTo(2)">End point</button>
+        <button (click)="setTo(3)">Obstecles</button>
+        <button (click)="setTo(0)">Clear</button>
+    </div>
+</div>
