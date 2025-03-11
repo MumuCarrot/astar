@@ -7,12 +7,15 @@
         }
     </div>
     <div class="bp">
-        <button (click)="start()">Start</button>
-        <button (click)="clear()">Clear All</button>
-
-        <button (click)="setTo(1)">Start point</button>
-        <button (click)="setTo(2)">End point</button>
-        <button (click)="setTo(3)">Obstecles</button>
-        <button (click)="setTo(0)">Clear</button>
+        <div class="button-container">
+            <button (click)="start()">Start</button>
+            <button (click)="clear()">Clear All</button>
+        </div>
+        <div class="button-container">
+            <button (click)="setTo(1)">Start point</button>
+            <button (click)="setTo(2)">End point</button>
+            <button (click)="setTo(3)">Obstecles</button>
+            <button (click)="setTo(0)">Clear</button>
+        </div>
     </div>
 </div>
