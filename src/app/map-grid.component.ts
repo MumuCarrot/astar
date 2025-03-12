@@ -3,6 +3,7 @@ import { Point } from "./point";
 import { MapItemComponent } from "./map-item.component";
 import { BrushService } from "./brush.service";
 import { Node } from "./node";
+import { PriorityQueue } from "./priorityQueue";
 
 @Component({
     selector: "app-map-grid",
@@ -111,29 +112,35 @@ export class MapGridComponent {
 
         if (this.startPoint == null || this.endPoint == null) return;
 
-        const frontier: Node[] = [];
-        const start = new Node(this.startPoint, 0, this.manhattanDistance(this.startPoint, this.endPoint));
-        frontier.push(start);
-        const came_from: {node: string, from: string | null }[] = [];
-        came_from.push({node: this.nodeParser(start), from: null});
+        const frontier = new PriorityQueue();
+        frontier.enqueue(this.startPoint, 0);
+        const cameFrom = new Map<string, Point | null>();
+        const costSoFar = new Map<string, number>();
+        cameFrom.set(`${this.startPoint.x},${this.startPoint.y}`, null);
+        costSoFar.set(`${this.startPoint.x},${this.startPoint.y}`, 0);
 
         while (frontier.length > 0) {
-            const current = frontier.shift()!;
-            for (const neighbor of this.getNeighbors(this.obstacles, current)) {
-                if (!came_from.find((x) => x.node === this.nodeParser(neighbor))) {
-                    frontier.push(neighbor);
-                    came_from.push({node: this.nodeParser(neighbor), from: this.nodeParser(current)});
+            const current = frontier.dequeue();
+
+            if (current.x === this.endPoint.x && current.y === this.endPoint.y) break;
+
+            for (const next of this.getNeighbors(this.obstacles, new Node(current, 0, 0))) {
+                const newCost = costSoFar.get(this.nodeParser(new Node(current, 0, 0)))! + 1;
+                if (!costSoFar.has(this.nodeParser(next)) || newCost < costSoFar.get(this.nodeParser(next))!) {
+                    costSoFar.set(this.nodeParser(next), newCost);
+                    const priority = newCost + this.manhattanDistance(this.endPoint, next.point);
+                    frontier.enqueue(next.point, priority);
+                    cameFrom.set(this.nodeParser(next), current);
                 }
             }
         }
 
-        let path: string[] = [];
-        let currentNode: string | null = this.nodeParser(new Node(this.endPoint, 0, 0));
+        let current: Point | null = this.endPoint;
+        const path: Point[] = [];
 
-        while (currentNode !== null) {
-            path.push(currentNode);
-            const entry = came_from.find((x) => x.node === currentNode);
-            currentNode = entry ? entry.from : null;
+        while (current) {
+            path.push(current);
+            current = cameFrom.get(this.nodeParser(new Node(current, 0, 0))) || null;
         }
 
         path.reverse();
@@ -141,9 +148,8 @@ export class MapGridComponent {
         this.obstacles.forEach((column) => {column.forEach((point) => {if (point.state == 4) point.state = 0;})});
 
         for (let i = 0; i < path.length; i++) {
-            let points = path[i].split(",");
-            if (this.obstacles[Number(points[0])][Number(points[1])].state == 0)
-                this.obstacles[Number(points[0])][Number(points[1])].state = 4;
+            if (this.obstacles[path[i].x][path[i].y].state == 0)
+                this.obstacles[path[i].x][path[i].y].state = 4;
         }
     }
 
